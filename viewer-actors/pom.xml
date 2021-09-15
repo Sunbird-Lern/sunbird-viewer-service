@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-    <artifactId>viewer-service-core</artifactId>
+    <artifactId>viewer-actors</artifactId>
 
     <repositories>
         <repository>
@@ -28,7 +28,7 @@
     <dependencies>
         <dependency>
             <groupId>org.sunbird</groupId>
-            <artifactId>viewer-platform-core</artifactId>
+            <artifactId>viewer-core</artifactId>
             <version>1.0</version>
         </dependency>
 

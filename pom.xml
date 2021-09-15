@@ -6,9 +6,9 @@
     <artifactId>sunbird-viewer-service</artifactId>
     <name>sunbird-viewer-service</name>
     <modules>
-        <module>viewer-platform-core</module>
-        <module>viewer-service-core</module>
-        <module>viewer-service-api</module>
+        <module>viewer-core</module>
+        <module>viewer-actors</module>
+        <module>viewer-service</module>
     </modules>
     <packaging>pom</packaging>
     <groupId>org.sunbird</groupId>

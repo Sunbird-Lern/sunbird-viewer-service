@@ -8,7 +8,7 @@
         <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>viewer-service-api</artifactId>
+    <artifactId>viewer-service</artifactId>
     <packaging>play2</packaging>
 
     <properties>
@@ -68,6 +68,10 @@
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.typesafe.play/filters-helpers -->
@@ -118,7 +122,7 @@
         </dependency>
         <dependency>
             <groupId>org.sunbird</groupId>
-            <artifactId>viewer-service-core</artifactId>
+            <artifactId>viewer-actors</artifactId>
             <version>1.0</version>
             <exclusions>
                 <exclusion>

@@ -10,7 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RequestInterceptor @Inject()(implicit val mat: Materializer, ec: ExecutionContext) extends Filter {
     // $COVERAGE-OFF$ Disabling scoverage for Interceptor
-    implicit val className = "org.sunbird.viewing.service"
+    implicit val className = "org.sunbird.viewer.service"
 
     def apply(next: (RequestHeader) => Future[Result])(request: RequestHeader): Future[Result] = {
 

@@ -8,7 +8,7 @@ import javax.inject.Inject
 case class ServiceHealth(name: String, healthy: Boolean, errMsg: Option[String] = None)
 class HealthCheckService @Inject() extends  Actor {
 
-  def receive = {
+  def receive: Receive = {
     case "checkhealth" => sender() ! getHealthStatus
     case "checkserviceshealth" => sender() ! getServiceHealthStatus(List("redis","cassandra","kafka"))
   }

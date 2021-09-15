@@ -1,7 +1,7 @@
 package org.sunbird.viewer.platform
 
 import com.datastax.driver.core.exceptions.DriverException
-import com.datastax.driver.core.{Cluster, ResultSet, Row}
+import com.datastax.driver.core._
 import org.slf4j.LoggerFactory
 
 
@@ -10,10 +10,12 @@ class CassandraUtil() {
   private val logger = LoggerFactory.getLogger("CassandraConnectorLogger")
   val host  = AppConfig.getString("cassandra.connection.host")
   val port = AppConfig.getString("cassandra.connection.port").toInt
+  val options : QueryOptions = new QueryOptions()
   val cluster = {
     Cluster.builder()
       .addContactPoint(host)
       .withPort(port)
+      .withQueryOptions(options.setConsistencyLevel(ConsistencyLevel.QUORUM))
       .withoutJMXReporting()
       .build()
   }
