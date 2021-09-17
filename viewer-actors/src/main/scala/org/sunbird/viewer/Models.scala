@@ -1,5 +1,7 @@
 package org.sunbird.viewer
 
+import org.sunbird.viewer.platform.APIResponse
+
 import java.util.UUID
 
 object Models {
@@ -36,7 +38,7 @@ object Constants{
 // Common Class
 
 case class Params(resmsgid: String, msgid: String, err: String, status: String, errmsg: Map[String,String], client_key: Option[String] = None)
-case class Response(id: String, ver: String, ts: String, params: Params, responseCode: String, result: Option[Map[String, AnyRef]])
+case class Response(id: String, ver: String, ts: String, params: Params, responseCode: String, result: Option[Map[String, AnyRef]]) extends APIResponse
 
 trait Request {
   def userId: String
