@@ -6,7 +6,7 @@ import controllers.HealthCheckController
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
-import org.sunbird.viewer.service.HealthCheckService
+import org.sunbird.viewer.actors.HealthCheckActor
 import play.api.Configuration
 import play.api.test.{FakeRequest, Helpers}
 
@@ -20,13 +20,13 @@ class TestHealthCheckController extends FlatSpec with Matchers with BeforeAndAft
     when(configurationMock.underlying).thenReturn(mockConfig)
     implicit val timeout: Timeout = 20.seconds
     implicit val executor = scala.concurrent.ExecutionContext.global
-    val healthActor = TestActorRef(new HealthCheckService() {
+    val healthActor = TestActorRef(new HealthCheckActor() {
         override def receive: Receive = {
             case "checkhealth" => sender() ! getHealthStatus
 
         }
     })
-    val controller = new HealthCheckController(healthActor, Helpers.stubControllerComponents(),system,configurationMock)
+    val controller = new HealthCheckController(healthActor, Helpers.stubControllerComponents(),configurationMock)
 
     "HealthCheckController" should "test the health check api  " in {
         val result = controller.getHealthCheckStatus().apply(FakeRequest())

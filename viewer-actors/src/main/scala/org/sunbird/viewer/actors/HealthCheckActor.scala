@@ -1,4 +1,4 @@
-package org.sunbird.viewer.service
+package org.sunbird.viewer.actors
 
 import akka.actor.Actor
 import org.sunbird.viewer.platform.{CassandraUtil, JSONUtils, KafkaUtil, RedisUtil}
@@ -6,7 +6,7 @@ import org.sunbird.viewer.platform.{CassandraUtil, JSONUtils, KafkaUtil, RedisUt
 import javax.inject.Inject
 
 case class ServiceHealth(name: String, healthy: Boolean, errMsg: Option[String] = None)
-class HealthCheckService @Inject() extends  Actor {
+class HealthCheckActor @Inject() extends  Actor {
 
   def receive: Receive = {
     case "checkhealth" => sender() ! getHealthStatus
