@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>sunbird-viewer-service</artifactId>
+        <groupId>org.sunbird</groupId>
+        <version>1.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>viewer-service</artifactId>
+    <packaging>play2</packaging>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+
+    <repositories>
+        <repository>
+            <id>scalaz-bintray</id>
+            <name>Scalaz Bintray - releases</name>
+            <url>https://dl.bintray.com/scalaz/releases/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>ing-bank</id>
+            <name>Ing-bank Repo</name>
+            <url>https://dl.bintray.com/ing-bank/maven-releases/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>typesafe-releases-plugins</id>
+            <url>https://repo.typesafe.com/typesafe/releases/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/com.typesafe.play/play-guice -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-guice_${scala.maj.version}</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play_${scala.maj.version}</artifactId>
+            <version>${play2.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.typesafe.play/filters-helpers -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>filters-helpers_${scala.maj.version}</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-netty-server_${scala.maj.version}</artifactId>
+            <version>${play2.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.typesafe.play/play-logback -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-logback_${scala.maj.version}</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-specs2_${scala.maj.version}</artifactId>
+            <version>${play2.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-testkit_${scala.maj.version}</artifactId>
+            <version>${akka.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_${scala.maj.version}</artifactId>
+            <version>3.0.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-slf4j_${scala.maj.version}</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sunbird</groupId>
+            <artifactId>viewer-actors</artifactId>
+            <version>1.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.typesafe.play</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+    <build>
+        <sourceDirectory>${basedir}/app</sourceDirectory>
+        <testSourceDirectory>${basedir}/test</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>${basedir}/conf</directory>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${play2.plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <!-- if using controllers without dependency injection; default value is "injected" -->
+                    <playVersion>${play2.version}</playVersion>
+                    <routesGenerator>static</routesGenerator>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.16</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Spec.java</include>
+                        <include>**/*Test.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.scoverage</groupId>
+                <artifactId>scoverage-maven-plugin</artifactId>
+                <version>${scoverage.plugin.version}</version>
+                <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                    <aggregate>true</aggregate>
+                    <highlighting>true</highlighting>
+                    <excludedFiles>.*RoutesPrefix.*;.*Routes.*;.*ReverseRoutes.*</excludedFiles>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
