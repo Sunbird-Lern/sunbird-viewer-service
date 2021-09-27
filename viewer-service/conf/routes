@@ -1,0 +1,6 @@
+GET  /health controllers.HealthCheckController.getHealthCheckStatus
+GET  /health/service controllers.HealthCheckController.getServiceHealthCheckStatus
+
+#POST /v1/view/start controllers.ViewCollectController.start
+#POST /v1/view/update controllers.ViewCollectController.update
+#POST /v1/view/end controllers.ViewCollectController.end
