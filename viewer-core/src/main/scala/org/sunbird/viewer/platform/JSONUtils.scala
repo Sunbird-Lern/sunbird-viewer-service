@@ -20,7 +20,8 @@ object JSONUtils {
   }
 
   @throws(classOf[Exception])
-  def deserialize[T: Manifest](value: String): T = mapper.readValue(value, typeReference[T]);
+  def deserialize[T: Manifest](value: String): T = mapper.readValue(value, typeReference[T])
+
 
   private[this] def typeReference[T: Manifest] = new TypeReference[T] {
     override def getType = typeFromManifest(manifest[T])

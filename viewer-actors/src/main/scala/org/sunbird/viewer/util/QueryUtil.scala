@@ -1,27 +1,29 @@
 package org.sunbird.viewer.util
 
 import com.datastax.driver.core.querybuilder.QueryBuilder.bindMarker
-import com.datastax.driver.core.querybuilder.{QueryBuilder => QB}
-import org.sunbird.viewer.Constants
+import com.datastax.driver.core.querybuilder.{Insert, QueryBuilder => QB}
+import org.sunbird.viewer.{BaseViewRequest, Constants}
 
 import java.util.Date
 
 /**
  * STATEMENTS
- * INSERT INTO sunbird_courses.user_content_consumption_new (userid,contentid,status,progress,courseid,batchid) VALUES (?,?,?,?,?,?) IF NOT EXISTS;
- * UPDATE sunbird_courses.user_content_consumption_new SET progress=? WHERE userid=? AND contentid=?;
+ * INSERT INTO sunbird_courses.user_content_consumption_new (userid,contentid,collectionid,batchid,status,progress) VALUES (?,?,?,?,?,?) IF NOT EXISTS;
+ * UPDATE sunbird_courses.user_content_consumption_new SET progress=? WHERE userid=? AND contentid=? and collectionid=? and contextid=?;
  */
 
 object QueryUtil {
 
-  def getInsertViewStartStatement(table: String, trackable: Boolean): String = {
-    var query = QB.insertInto(Constants.SUNBIRD_COURSES_KEYSPACE, table).ifNotExists()
-      .value("userid", bindMarker()).value("contentid", bindMarker())
+  def getBaseInsert(table:String,request:BaseViewRequest): Insert = {
+    QB.insertInto(Constants.SUNBIRD_COURSES_KEYSPACE, table).ifNotExists()
+      .value("userid", request.userId).value("contentid", request.contentId)
+      .value("collectionId", request.collectionId.get).value("contextid", request.contextId.get)
+  }
+
+  def getInsertViewStartStatement(table: String,request: BaseViewRequest): String = {
+      getBaseInsert(table,request)
       .value("status", bindMarker()).value("progress", bindMarker())
-      .value("last_updated_time", new Date())
-    if (trackable)
-      query = query.value("batchid", bindMarker()).value("courseid", bindMarker())
-    query.toString
+      .value("last_updated_time", new Date()).toString
   }
 
   def getUpdateViewUpdateStatement(table: String): String = {
