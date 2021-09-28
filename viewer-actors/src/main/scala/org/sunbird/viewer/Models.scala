@@ -40,21 +40,37 @@ object Constants{
 case class Params(resmsgid: String, msgid: String, err: String, status: String, errmsg: Map[String,String], client_key: Option[String] = None)
 case class Response(id: String, ver: String, ts: String, params: Params, responseCode: String, result: Option[Map[String, AnyRef]]) extends APIResponse
 
-trait Request {
+case class BaseRequest(`type`:String,request: String)
+
+trait BaseViewRequest {
   def userId: String
   def contentId : String
-  def batchId: String
-  def collectionId: String
+  def collectionId: Option[String]
+  def contextId: Option[String]
 }
 
-
-case class BaseRequest(`type`:String,request: String)
 case class ViewRequestBody(id: String, ver: String, ts: String, request: Map[String,AnyRef], params: Option[Params])
-case class ViewStartRequest(userId: String, contentId:String, batchId:String,collectionId :String) extends Request
-case class ViewUpdateRequest(userId: String, contentId:String, batchId:String,collectionId :String,progress: Int) extends Request
+
+
+case class StartRequest(userId: String, contentId:String,collectionId :Option[String],contextId:Option[String])
+  extends  BaseViewRequest {
+  def validateRequest: Either[Map[String,AnyRef],StartRequest] ={
+    if(null == userId || userId.isEmpty)
+      Left(Map("request.userId" -> "cannot be empty"))
+    else  if(null == contentId || contentId.isEmpty)
+      Left(Map("request.contentId" -> "cannot be empty"))
+    else
+      Right(StartRequest(userId,contentId,Some(collectionId.getOrElse(contentId)),
+        Some(contextId.getOrElse(collectionId.getOrElse(contentId)
+        ))))
+  }
+}
+
+case class ViewUpdateRequest(userId: String, contentId:String, batchId:String,collectionId :String,progress: Int)
 
 case class ViewEndRequest(userId: String, contentId:String, batchId:String,collectionId :String,
-                          assessments: List[Map[String,AnyRef]]) extends Request
+                          assessments: List[Map[String,AnyRef]])
+
 
 case class ContentEndEvent(eid: String = "BE_JOB_REQUEST", ets: Long = System.currentTimeMillis(),
                            mid: String = UUID.randomUUID.toString, actor: TypeId, context: Context, `object`: TypeId,

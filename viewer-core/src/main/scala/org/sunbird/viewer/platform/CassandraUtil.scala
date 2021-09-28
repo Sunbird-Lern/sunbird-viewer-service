@@ -19,8 +19,7 @@ class CassandraUtil() {
       .withoutJMXReporting()
       .build()
   }
-  val session = cluster.connect()
-
+  private val session = cluster.connect()
 
 
   def executeQuery(query: String): Boolean = {

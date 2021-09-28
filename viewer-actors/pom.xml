@@ -47,6 +47,11 @@
             <artifactId>akka-actor_${scala.maj.version}</artifactId>
             <version>${akka.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.scalameta</groupId>
+            <artifactId>scalameta_${scala.maj.version}</artifactId>
+            <version>4.3.0</version>
+        </dependency>
 
 
 
