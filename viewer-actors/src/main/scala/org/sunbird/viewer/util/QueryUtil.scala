@@ -30,7 +30,7 @@ object QueryUtil {
     QB.update(Constants.SUNBIRD_COURSES_KEYSPACE, table)
       .`with`(QB.set("progress", bindMarker())).and(QB.set("last_updated_time", new Date()))
       .where(QB.eq("userid", bindMarker()))
-      .and(QB.eq("contentid", bindMarker())).toString
+      .and(QB.eq("contentid", bindMarker())).ifExists().toString
   }
 
   def getUpdateViewEndStatement(table: String): String = {

@@ -1,4 +1,4 @@
-package org.sunbird.viewer.platform
+package org.sunbird.viewer.core
 
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord, RecordMetadata}

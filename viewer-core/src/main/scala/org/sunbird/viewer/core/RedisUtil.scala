@@ -1,4 +1,4 @@
-package org.sunbird.viewer.platform
+package org.sunbird.viewer.core
 
 import redis.clients.jedis.{Jedis, JedisPool, JedisPoolConfig}
 

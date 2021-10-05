@@ -1,4 +1,4 @@
-package org.sunbird.viewer.platform
+package org.sunbird.viewer.core
 
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 

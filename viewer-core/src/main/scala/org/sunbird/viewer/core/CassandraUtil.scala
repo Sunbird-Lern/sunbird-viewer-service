@@ -1,4 +1,4 @@
-package org.sunbird.viewer.platform
+package org.sunbird.viewer.core
 
 import com.datastax.driver.core.exceptions.DriverException
 import com.datastax.driver.core._

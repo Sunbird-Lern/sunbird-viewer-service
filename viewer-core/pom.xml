@@ -52,12 +52,12 @@
                     <artifactId>azure-storage</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-core</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -81,6 +81,17 @@
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
             <version>3.7.0</version>
+            <exclusions>
+            <exclusion>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+            </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>19.0</version>
         </dependency>
         <dependency>
             <groupId>org.cassandraunit</groupId>

@@ -1,4 +1,4 @@
-package org.sunbird.viewer.platform
+package org.sunbird.viewer.core
 
 import com.typesafe.config.ConfigFactory
 

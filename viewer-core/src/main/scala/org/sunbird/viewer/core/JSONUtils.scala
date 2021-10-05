@@ -1,4 +1,4 @@
-package org.sunbird.viewer.platform
+package org.sunbird.viewer.core
 
 import java.lang.reflect.{ParameterizedType, Type}
 import com.fasterxml.jackson.annotation.JsonInclude.Include
@@ -16,7 +16,7 @@ object JSONUtils {
 
   @throws(classOf[Exception])
   def serialize(obj: AnyRef): String = {
-    mapper.writeValueAsString(obj);
+    mapper.writeValueAsString(obj)
   }
 
   @throws(classOf[Exception])

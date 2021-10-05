@@ -36,7 +36,6 @@ class TestHealthCheckController extends FlatSpec with Matchers with BeforeAndAft
 
     "HealthCheckController" should "api services connection" in {
         val result = healthActor.underlyingActor.getServiceHealthStatus(List("redis","cassandra","kafka"))
-        println(result)
     }
 
 }

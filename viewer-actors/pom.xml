@@ -47,11 +47,6 @@
             <artifactId>akka-actor_${scala.maj.version}</artifactId>
             <version>${akka.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.scalameta</groupId>
-            <artifactId>scalameta_${scala.maj.version}</artifactId>
-            <version>4.3.0</version>
-        </dependency>
 
 
 
@@ -66,6 +61,18 @@
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_${scala.maj.version}</artifactId>
             <version>3.0.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.cassandraunit</groupId>
+            <artifactId>cassandra-unit</artifactId>
+            <version>3.11.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.7.22</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
