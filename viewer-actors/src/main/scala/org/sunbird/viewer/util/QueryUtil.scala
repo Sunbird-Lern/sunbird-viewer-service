@@ -2,7 +2,7 @@ package org.sunbird.viewer.util
 
 import com.datastax.driver.core.querybuilder.QueryBuilder.bindMarker
 import com.datastax.driver.core.querybuilder.{Insert, QueryBuilder => QB}
-import org.sunbird.viewer.{BaseViewRequest, Constants}
+import org.sunbird.viewer.{BaseViewRequest, Constants, ViewerSummaryRequest}
 
 import java.util.Date
 
@@ -38,7 +38,7 @@ object QueryUtil {
       .`with`(QB.set("progress", bindMarker())).and(QB.set("status", bindMarker()))
       .and(QB.set("last_updated_time", new Date()))
       .where(QB.eq("userid", bindMarker()))
-      .and(QB.eq("contentid", bindMarker())).toString
+      .and(QB.eq("contentid", bindMarker())).ifExists().toString
   }
 
   def getUpdateEndEnrolStatement(table: String): String = {
@@ -55,5 +55,26 @@ object QueryUtil {
       .and(QB.eq("courseid",bindMarker()))
       .and(QB.eq("batchid",bindMarker())).toString
   }
+  
+  def getEnrolments(request: ViewerSummaryRequest): String = {
+    var select = QB.select.from(Constants.SUNBIRD_COURSES_KEYSPACE, Constants.USER_ENROLMENTS_TABLE)
+      .where(QB.eq("userid", request.userId))
+    select = request.collectionId.map(x => select.and(QB.eq("courseid", x))).getOrElse(select)
+    select = request.contextId.map(x => select.and(QB.eq("batchid", x))).getOrElse(select)
+    select.toString
+  }
 
+  /**
+   * To fetch user activity agg
+   * cannot include context_id to in clause, as cassandra throws error
+   * @param userId
+   * @param collectionIds
+   * @param contextIds
+   * @return
+   */
+  def getUserActivities(userId: String, collectionIds: List[String]): String = {
+    QB.select.from(Constants.SUNBIRD_COURSES_KEYSPACE, Constants.USER_ACTIVITY_TABLE)
+      .where(QB.eq("activity_type","Course")).and(QB.eq("user_id", userId))
+      .and(QB.in("activity_id", collectionIds)).toString
+  }
 }

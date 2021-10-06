@@ -2,7 +2,7 @@ package org.sunbird.viewer.actors
 
 import akka.actor.Actor
 import org.sunbird.viewer._
-import org.sunbird.viewer.platform.{CassandraUtil, JSONUtils}
+import org.sunbird.viewer.core.{CassandraUtil, JSONUtils}
 import org.sunbird.viewer.util.{QueryUtil, ResponseUtil}
 
 import javax.inject.Inject

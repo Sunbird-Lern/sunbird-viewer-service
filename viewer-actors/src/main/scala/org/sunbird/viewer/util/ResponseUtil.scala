@@ -1,7 +1,7 @@
 package org.sunbird.viewer.util
 
 import org.joda.time.{DateTime, DateTimeZone}
-import org.sunbird.viewer.platform.APIResponseUtil
+import org.sunbird.viewer.core.APIResponseUtil
 import org.sunbird.viewer.{Params, Response, ResponseCode}
 
 import java.util.UUID

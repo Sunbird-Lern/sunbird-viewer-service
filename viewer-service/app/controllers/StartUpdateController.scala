@@ -2,7 +2,7 @@ package controllers
 
 import akka.actor.ActorRef
 import akka.pattern.ask
-import org.sunbird.viewer.platform.JSONUtils
+import org.sunbird.viewer.core.JSONUtils
 import org.sunbird.viewer.{BaseRequest, Response}
 import play.api.Configuration
 import play.api.libs.json.Json

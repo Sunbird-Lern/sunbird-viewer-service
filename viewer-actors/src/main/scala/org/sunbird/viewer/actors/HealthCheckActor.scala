@@ -1,7 +1,7 @@
 package org.sunbird.viewer.actors
 
 import akka.actor.Actor
-import org.sunbird.viewer.platform.{CassandraUtil, JSONUtils, KafkaUtil, RedisUtil}
+import org.sunbird.viewer.core.{CassandraUtil, JSONUtils, KafkaUtil, RedisUtil}
 
 import javax.inject.Inject
 

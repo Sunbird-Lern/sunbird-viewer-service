@@ -1,4 +1,4 @@
-package org.sunbird.viewer.platform
+package org.sunbird.viewer.core
 
 import java.lang.reflect.{ParameterizedType, Type}
 import com.fasterxml.jackson.annotation.JsonInclude.Include

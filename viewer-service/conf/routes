@@ -4,3 +4,7 @@ GET  /health/service controllers.HealthCheckController.getServiceHealthCheckStat
 POST /v1/view/start controllers.StartUpdateController.start
 #POST /v1/view/update controllers.ViewCollectController.update
 #POST /v1/view/end controllers.ViewCollectController.end
+
+#summary APIs
+GET   /v1/summary/list:userId    controllers.ViewerSummaryController.summaryList(userId: String)
+POST  /v1/summary/read           controllers.ViewerSummaryController.summaryRead()

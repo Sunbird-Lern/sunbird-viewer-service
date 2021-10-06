@@ -1,6 +1,6 @@
 package org.sunbird.viewer
 
-import org.sunbird.viewer.platform.APIResponse
+import org.sunbird.viewer.core.APIResponse
 
 import java.util.UUID
 
@@ -29,9 +29,12 @@ object Constants{
   val VIEW_END_REQUEST = "api.view.end"
   val VIEW_UPDATE_REQUEST = "api.view.update"
   val VIEW_READ_REQUEST = "api.view.read"
+  val VIEW_SUMMARY_LIST_API_ID = "api.summary.list"
+  val VIEW_SUMMARY_READ_API_ID = "api.summary.read"
   val SUNBIRD_COURSES_KEYSPACE= "sunbird_courses"
   val CONTENT_CONSUMPTION_TABLE="user_content_consumption_new"
   val USER_ENROLMENTS_TABLE="user_enrolments"
+  val USER_ACTIVITY_TABLE="user_activity_agg"
   val CONTENT_START_STATUS = 1
   val CONTENT_END_ = 1
 }
@@ -39,6 +42,7 @@ object Constants{
 
 case class Params(resmsgid: String, msgid: String, err: String, status: String, errmsg: Map[String,String], client_key: Option[String] = None)
 case class Response(id: String, ver: String, ts: String, params: Params, responseCode: String, result: Option[Map[String, AnyRef]]) extends APIResponse
+
 
 case class BaseRequest(`type`:String,request: String)
 
@@ -81,3 +85,16 @@ case class Context(pdata: PData)
 case class PData(ver: String , id : String)
 case class EData(contents: List[Content])
 case class Content(contentId: String, status:Int)
+
+case class ViewerSummaryRequest(userId: String, collectionId: Option[String], contextId: Option[String])
+
+case class Summary(userId: String, collectionId: String, contextId: String, enrolledDate: String, active: Boolean,
+                   contentStatus: Map[String, Int], assessmentStatus: Map[String, Map[String, AnyRef]],
+                   collection: Map[String, AnyRef], issuedCertificates: java.util.List[java.util.Map[String, String]],
+                   completedOn: String, progress: Int, status: Int)
+
+case class EnrolmentData(userId: String, collectionId: String, contextId: String, enrolledDate: String, active: Boolean,
+                         issuedCertificates: java.util.List[java.util.Map[String, String]], completedOn: String, progress: Int, status: Int)
+
+case class UserActivityData(userId: String, collectionId: String, contextId: String, contentStatus: Map[String, Int],
+                            assessmentStatus: Map[String, Map[String, AnyRef]])

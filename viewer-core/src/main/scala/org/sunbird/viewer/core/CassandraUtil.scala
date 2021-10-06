@@ -1,4 +1,4 @@
-package org.sunbird.viewer.platform
+package org.sunbird.viewer.core
 
 import com.datastax.driver.core.exceptions.DriverException
 import com.datastax.driver.core._
@@ -36,6 +36,18 @@ class CassandraUtil() {
   def find(query: String,bindList: List[AnyRef]): java.util.List[Row] = {
     try {
       val rs: ResultSet = session.execute(session.prepare(query).bind(bindList : _*))
+      rs.all
+    } catch {
+      case ex: DriverException =>
+        logger.info(s"Failed cassandra query is ${query}")
+        ex.printStackTrace()
+        throw ex
+    }
+  }
+
+  def find(query: String): java.util.List[Row] = {
+    try {
+      val rs: ResultSet = session.execute(query)
       rs.all
     } catch {
       case ex: DriverException =>
