@@ -5,6 +5,7 @@ import com.datastax.driver.core.querybuilder.{Insert, QueryBuilder => QB}
 import org.sunbird.viewer.{BaseViewRequest, Constants, ViewerSummaryRequest}
 
 import java.util.Date
+import scala.collection.JavaConverters._
 
 /**
  * STATEMENTS
@@ -73,8 +74,9 @@ object QueryUtil {
    * @return
    */
   def getUserActivities(userId: String, collectionIds: List[String]): String = {
-    QB.select.from(Constants.SUNBIRD_COURSES_KEYSPACE, Constants.USER_ACTIVITY_TABLE)
+    val select = QB.select.from(Constants.SUNBIRD_COURSES_KEYSPACE, Constants.USER_ACTIVITY_TABLE)
       .where(QB.eq("activity_type","Course")).and(QB.eq("user_id", userId))
-      .and(QB.in("activity_id", collectionIds)).toString
+      .and(QB.in("activity_id", collectionIds.asJava))
+    select.toString
   }
 }

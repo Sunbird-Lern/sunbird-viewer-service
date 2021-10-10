@@ -88,13 +88,13 @@ case class Content(contentId: String, status:Int)
 
 case class ViewerSummaryRequest(userId: String, collectionId: Option[String], contextId: Option[String])
 
-case class Summary(userId: String, collectionId: String, contextId: String, enrolledDate: String, active: Boolean,
-                   contentStatus: Map[String, Int], assessmentStatus: Map[String, Map[String, AnyRef]],
+case class Summary(userId: String, collectionId: String, contextId: String, enrolledDate: Long, active: Boolean,
+                   contentStatus: Map[String, Integer], assessmentStatus: Map[String, Map[String, AnyRef]],
                    collection: Map[String, AnyRef], issuedCertificates: java.util.List[java.util.Map[String, String]],
-                   completedOn: String, progress: Int, status: Int)
+                   completedOn: Long, progress: Int, status: Int)
 
-case class EnrolmentData(userId: String, collectionId: String, contextId: String, enrolledDate: String, active: Boolean,
-                         issuedCertificates: java.util.List[java.util.Map[String, String]], completedOn: String, progress: Int, status: Int)
+case class EnrolmentData(userId: String, collectionId: String, contextId: String, enrolledDate: Long, active: Boolean,
+                         issuedCertificates: java.util.List[java.util.Map[String, String]], completedOn: Long, progress: Int, status: Int)
 
-case class UserActivityData(userId: String, collectionId: String, contextId: String, contentStatus: Map[String, Int],
+case class UserActivityData(userId: String, collectionId: String, contextId: String, contentStatus: Map[String, Integer],
                             assessmentStatus: Map[String, Map[String, AnyRef]])

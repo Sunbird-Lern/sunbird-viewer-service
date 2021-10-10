@@ -4,7 +4,9 @@ import com.datastax.driver.core.exceptions.DriverException
 import com.datastax.driver.core._
 import org.slf4j.LoggerFactory
 
+import javax.inject.Singleton
 
+@Singleton
 class CassandraUtil() {
 
   private val logger = LoggerFactory.getLogger("CassandraConnectorLogger")

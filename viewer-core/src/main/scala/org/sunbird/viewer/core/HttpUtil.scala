@@ -1,11 +1,14 @@
 package org.sunbird.viewer.core
 
 import com.mashape.unirest.http.Unirest
+
+import javax.inject.Singleton
 import scala.collection.JavaConverters._
 
 
 case class HTTPResponse(status: Int, body: String) extends Serializable
 
+@Singleton
 class HttpUtil extends Serializable {
 
   def get(url: String, headers: Map[String, String] = Map[String, String]("Content-Type" -> "application/json")): HTTPResponse = {
