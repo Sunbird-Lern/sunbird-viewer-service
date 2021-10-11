@@ -27,7 +27,7 @@ class CassandraUtil() {
     rs.wasApplied
   }
 
-  def executeStatement(query: String, bindList:List[AnyRef]): Boolean = {
+  def executeStmt(query: String, bindList:List[AnyRef]): Boolean = {
     val rs: ResultSet = session.execute(session.prepare(query).bind(bindList :_*))
     rs.wasApplied
   }

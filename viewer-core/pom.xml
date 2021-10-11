@@ -62,6 +62,16 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.sunbird</groupId>
+            <artifactId>platform-common</artifactId>
+            <version>1.0-beta</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sunbird</groupId>
+            <artifactId>platform-telemetry</artifactId>
+            <version>1.0-beta</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_${scala.maj.version}</artifactId>
             <version>1.0.1</version>
@@ -99,12 +109,12 @@
             <version>3.11.2.0</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>net.manub</groupId>
             <artifactId>scalatest-embedded-kafka_${scala.maj.version}</artifactId>
             <version>1.1.0</version>
             <scope>test</scope>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
@@ -126,6 +136,12 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>2.7.22</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>it.ozimov</groupId>
+            <artifactId>embedded-redis</artifactId>
+            <version>0.7.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

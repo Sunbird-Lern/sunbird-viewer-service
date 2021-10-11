@@ -14,7 +14,6 @@ class HealthCheckController @Inject() (@Named("health-check-actor") healthCheckA
                                        cc: ControllerComponents,config: Configuration)(implicit ec: ExecutionContext)
   extends BaseController(cc,config) {
   def getHealthCheckStatus() = Action.async {
-
     val result = ask(healthCheckActor, "checkhealth").mapTo[String]
     result.map { x =>
       Ok(x).withHeaders(CONTENT_TYPE -> "application/json");

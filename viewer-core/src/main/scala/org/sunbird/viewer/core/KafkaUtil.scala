@@ -1,7 +1,8 @@
 package org.sunbird.viewer.core
 
-import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.apache.kafka.clients.consumer.{ConsumerConfig, KafkaConsumer}
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord, RecordMetadata}
+import org.apache.kafka.common.serialization.{Deserializer, StringDeserializer}
 
 import java.util.HashMap
 import java.util.concurrent.Future
@@ -30,7 +31,7 @@ class KafkaUtil {
 
   def checKConnection():Boolean = {
     try {
-      val consumer = new KafkaConsumer[String, String](props)
+      val consumer = new KafkaConsumer[String, String](props,new StringDeserializer,new StringDeserializer)
       consumer.listTopics()
       consumer.close();
       true

@@ -4,16 +4,15 @@ CREATE KEYSPACE IF NOT EXISTS sunbird_courses WITH replication = {
 };
 
 
-CREATE TABLE sunbird_courses.user_content_consumption_new (
+CREATE TABLE IF NOT EXISTS sunbird_courses.user_content_consumption_new (
     userid text,
     contentid text,
     collectionid text,
     contextid text,
-    datetime timestamp,
     last_access_time timestamp,
     last_completed_time timestamp,
     last_updated_time timestamp,
-    progress int,
+    progressdetails text,
     status int,
     PRIMARY KEY (userid, contentid, collectionid, contextid)
 ) WITH CLUSTERING ORDER BY (contentid ASC,collectionid ASC, contextid ASC)
@@ -32,10 +31,13 @@ CREATE TABLE sunbird_courses.user_content_consumption_new (
     AND read_repair_chance = 0.0
     AND speculative_retry = '99PERCENTILE';
 
-INSERT INTO sunbird_courses.user_content_consumption_new  (userid,contentid,collectionid,contextid,progress,status) VALUES ('u2', 'c2','cc2','b2',20,1);
+INSERT INTO sunbird_courses.user_content_consumption_new  (userid,contentid,collectionid,contextid,progressdetails,status)
+VALUES ('u2', 'c2','cc2','b2','{"mimetype": "video","progress":10}',1);
+INSERT INTO sunbird_courses.user_content_consumption_new  (userid,contentid,collectionid,contextid,progressdetails,status)
+VALUES ('user_test1', 'content_test1','content_test1','content_test1','{"mimetype": "video","progress":10}',1);
 
 
-CREATE TABLE sunbird_courses.user_enrolments (
+CREATE TABLE IF NOT EXISTS sunbird_courses.user_enrolments (
     userid text,
     courseid text,
     batchid text,

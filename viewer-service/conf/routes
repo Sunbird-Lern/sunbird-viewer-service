@@ -3,4 +3,4 @@ GET  /health/service controllers.HealthCheckController.getServiceHealthCheckStat
 
 POST /v1/view/start controllers.ViewCollectController.start
 POST /v1/view/update controllers.ViewCollectController.update
-#POST /v1/view/end controllers.ViewCollectController.end
+POST /v1/view/end controllers.ViewCollectController.end

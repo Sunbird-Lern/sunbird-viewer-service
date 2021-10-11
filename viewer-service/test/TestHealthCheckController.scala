@@ -22,8 +22,8 @@ class TestHealthCheckController extends FlatSpec with Matchers with BeforeAndAft
     implicit val executor = scala.concurrent.ExecutionContext.global
     val healthActor = TestActorRef(new HealthCheckActor() {
         override def receive: Receive = {
-            case "checkhealth" => sender() ! getHealthStatus
-
+            case "checkhealth" => sender() ! "hello"
+            case "checkserviceshealth" => sender() ! "success"
         }
     })
     val controller = new HealthCheckController(healthActor, Helpers.stubControllerComponents(),configurationMock)
@@ -35,7 +35,8 @@ class TestHealthCheckController extends FlatSpec with Matchers with BeforeAndAft
 
 
     "HealthCheckController" should "api services connection" in {
-        val result = healthActor.underlyingActor.getServiceHealthStatus(List("redis","cassandra","kafka"))
+            val result = controller.getServiceHealthCheckStatus().apply(FakeRequest())
+            Helpers.status(result) should be(Helpers.OK)
     }
 
 }

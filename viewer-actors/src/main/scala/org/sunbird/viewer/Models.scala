@@ -14,13 +14,8 @@ object ResponseCode extends Enumeration {
 //type StatusCode = Value
 object StatusCode extends Enumeration {
   type status = Int
-  val START,UPDATE = Value("1")
+  val START = Value("1")
   val END: StatusCode.Value = Value("2")
-}
-object ProgressCode extends Enumeration {
-  type status = Int
-  val START: ProgressCode.Value = Value("1")
-  val END: ProgressCode.Value = Value("100")
 }
 
 
@@ -47,6 +42,7 @@ sealed trait BaseViewRequest {
   def contentId : String
   def collectionId: Option[String]
   def contextId: Option[String]
+
   def validate() : Map[String,AnyRef] = {
     if(null == userId || userId.isEmpty)
     Map("request.userId" -> "cannot be empty")
@@ -55,42 +51,55 @@ sealed trait BaseViewRequest {
     else
       Map()
   }
+  override def toString: String ={
+    s"""$userId:$contentId:${collectionId.getOrElse(contentId)}:${contextId.getOrElse(collectionId.getOrElse(contentId))}""".stripMargin
+  }
   def validateRequest : Either[Map[String,AnyRef],BaseViewRequest]
 }
 
 case class ViewRequestBody(id: String, ver: String, ts: String, request: Map[String,AnyRef], params: Option[Params])
 
 
-case class StartRequest(userId: String, contentId:String,collectionId :Option[String],contextId:Option[String])
+case class ViewRequest(userId: String, contentId:String,collectionId :Option[String],contextId:Option[String])
   extends  BaseViewRequest {
-  override def validateRequest: Either[Map[String,AnyRef],StartRequest] ={
+
+  override def validateRequest: Either[Map[String,AnyRef],ViewRequest] ={
     val validationErrors= validate()
     if(validationErrors.nonEmpty)
       Left(validationErrors)
     else
-      Right(StartRequest(userId,contentId,Some(collectionId.getOrElse(contentId)),
-        Some(contextId.getOrElse(collectionId.getOrElse(contentId)
-        ))))
+      Right(ViewRequest(userId,contentId,Some(collectionId.getOrElse(contentId)),
+        Some(contextId.getOrElse(collectionId.getOrElse(contentId)))))
   }
 }
 case class UpdateRequest(userId: String, contentId:String, collectionId:Option[String],contextId :Option[String],
-                             progressDetails: Map[String,Any],timespent: Int) extends BaseViewRequest{
+                         progressdetails: Map[String,Any],timespent:  Double) extends BaseViewRequest{
   override def validateRequest: Either[Map[String, AnyRef], UpdateRequest] = {
     val validationErrors= validate()
     if(validationErrors.nonEmpty)
       Left(validationErrors)
-    else if(!timespent.isValidInt)
-      Left(Map("request.timespent" -> "cannot be empty and should be valid number"))
-    else if (progressDetails.isEmpty)
-      Left(Map("request.progressDetails" -> "progress details cannot be empty"))
-    else
+    else if (progressdetails.isEmpty)
+      Left(Map("request.progressdetails" -> "progress details cannot be empty"))
+    else {
       Right(UpdateRequest(userId,contentId,Some(collectionId.getOrElse(contentId)),
-        Some(contextId.getOrElse(collectionId.getOrElse(contentId))),progressDetails,timespent))
+        Some(contextId.getOrElse(collectionId.getOrElse(contentId))),progressdetails,timespent))
+    }
   }
 }
 
-case class ViewEndRequest(userId: String, contentId:String, batchId:String,collectionId :String,
-                          assessments: List[Map[String,AnyRef]])
+case class EndRequest(userId: String, contentId:String, collectionId:Option[String],contextId :Option[String],
+                         progressdetails: Option[Map[String,Any]]) extends BaseViewRequest{
+  override def validateRequest: Either[Map[String, AnyRef], EndRequest] = {
+    val validationErrors= validate()
+    if(validationErrors.nonEmpty)
+      Left(validationErrors)
+    else {
+      Right(EndRequest(userId,contentId,Some(collectionId.getOrElse(contentId)),
+        Some(contextId.getOrElse(collectionId.getOrElse(contentId))),
+        progressdetails))
+    }
+  }
+}
 
 
 case class ContentEndEvent(eid: String = "BE_JOB_REQUEST", ets: Long = System.currentTimeMillis(),

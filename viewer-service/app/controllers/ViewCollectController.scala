@@ -17,20 +17,32 @@ class ViewCollectController @Inject()(@Named("view-collect-actor") collectActor:
                                       cc: ControllerComponents, config: Configuration)(implicit ec: ExecutionContext)
   extends BaseController(cc,config) {
   def start() : Action[AnyContent]= Action.async { request: Request[AnyContent] =>
-    val body: String = Json.stringify(request.body.asJson.get)
-    val requestBody = JSONUtils.deserialize[ViewRequestBody](body).request
-      .+(("userId", request.attrs.get(USER_ID).getOrElse(null)))
-    val res = ask(collectActor, BaseRequest("start",JSONUtils.serialize(requestBody))).mapTo[BaseResponse]
+    val requestBody =updateUserId(request)
+    val res = ask(collectActor, BaseRequest("start",requestBody)).mapTo[BaseResponse]
     res.map { x =>
       result(x.responseCode,JSONUtils.serialize(x))
     }
   }
 
-  def update()  = Action.async {
-    val result = ask(collectActor,  "update").mapTo[String]
-      result.map { x =>
-        Ok(x).withHeaders(CONTENT_TYPE -> "application/json");
-      }
+  def update()  = Action.async { request : Request[AnyContent] =>
+    val res = ask(collectActor, BaseRequest("update",updateUserId(request))).mapTo[BaseResponse]
+    res.map { x =>
+      result(x.responseCode,JSONUtils.serialize(x))
+    }
+  }
+
+  def end()  = Action.async { request : Request[AnyContent] =>
+    val res = ask(collectActor, BaseRequest("end",updateUserId(request))).mapTo[BaseResponse]
+    res.map { x =>
+      result(x.responseCode,JSONUtils.serialize(x))
+    }
+  }
+
+
+  def updateUserId(request:Request[AnyContent]): String = {
+    val requestBody =Json.stringify(request.body.asJson.get)
+    JSONUtils.serialize(JSONUtils.deserialize[ViewRequestBody](requestBody).request
+      .+(("userId", request.attrs.get(USER_ID).getOrElse(null))))
   }
 
 }

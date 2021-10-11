@@ -172,7 +172,6 @@
                 <version>${play2.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <!-- if using controllers without dependency injection; default value is "injected" -->
                     <playVersion>${play2.version}</playVersion>
                     <routesGenerator>static</routesGenerator>
                 </configuration>
@@ -187,6 +186,20 @@
                         <include>**/*Test.java</include>
                     </includes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest-maven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <id>test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.scoverage</groupId>

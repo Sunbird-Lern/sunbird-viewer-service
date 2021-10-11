@@ -16,8 +16,4 @@ object AppConfig {
     conf.getInt(key)
   }
 
-  def getDouble(key: String): Double = {
-    conf.getDouble(key)
-  }
-
 }
