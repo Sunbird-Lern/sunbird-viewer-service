@@ -97,4 +97,6 @@ case class EnrolmentData(userId: String, collectionId: String, contextId: String
                          issuedCertificates: java.util.List[java.util.Map[String, String]], completedOn: Long, progress: Int, status: Int)
 
 case class UserActivityData(userId: String, collectionId: String, contextId: String, contentStatus: Map[String, Integer],
-                            assessmentStatus: Map[String, Map[String, AnyRef]])
+                            assessmentStatus: Map[String, Map[String, AnyRef]]) {
+  def this() = this("", "", "", Map(), Map())
+}

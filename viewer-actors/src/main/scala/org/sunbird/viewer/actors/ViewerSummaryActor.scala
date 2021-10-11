@@ -25,12 +25,19 @@ class ViewerSummaryActor @Inject()(cassandraUtil: CassandraUtil, httpUtil: HttpU
     try {
       // read all enrolments with status = 2
       val enrolments: Map[String, EnrolmentData] = readEnrolments(userId)
-      // read all user-activity-agg
-      val activityData = readUserActivity(userId, enrolments.keySet.toList)
-      // get all content metadata from search
-      val collectionMetadata = searchMetadata(enrolments.keySet.toList)
-      // merge all and send the response
-      prepareResponse(Constants.VIEW_SUMMARY_LIST_API_ID, enrolments, activityData, collectionMetadata)
+      if(!enrolments.isEmpty) {
+        // read all user-activity-agg
+        val activityData = readUserActivity(userId, enrolments.keySet.toList)
+        // get all content metadata from search
+        val collectionMetadata = searchMetadata(enrolments.keySet.toList)
+        // merge all and send the response
+        prepareResponse(Constants.VIEW_SUMMARY_LIST_API_ID, enrolments, activityData, collectionMetadata)
+      } else {
+        // return empty response
+        ResponseUtil.OK(Constants.VIEW_SUMMARY_LIST_API_ID, Map("summary" -> List()))
+      }
+      
+     
     } catch {
       case e: Exception => ResponseUtil
         .serverErrorResponse(Constants.VIEW_SUMMARY_LIST_API_ID, Map("message" -> e.getMessage))
@@ -44,12 +51,17 @@ class ViewerSummaryActor @Inject()(cassandraUtil: CassandraUtil, httpUtil: HttpU
     try {
       // read all enrolments with status = 2
       val enrolments: Map[String, EnrolmentData] = readEnrolments(req.userId, req.collectionId.get, req.contextId.get)
-      // read all user-activity-agg
-      val activityData = readUserActivity(req.userId, enrolments.keySet.toList)
-      // get all content metadata from search
-      val collectionMetadata = searchMetadata(enrolments.keySet.toList)
-      // merge all and send the response
-      prepareResponse(Constants.VIEW_SUMMARY_READ_API_ID, enrolments, activityData, collectionMetadata)
+      if(!enrolments.isEmpty) {
+        // read all user-activity-agg
+        val activityData = readUserActivity(req.userId, enrolments.keySet.toList)
+        // get all content metadata from search
+        val collectionMetadata = searchMetadata(enrolments.keySet.toList)
+        // merge all and send the response
+        prepareResponse(Constants.VIEW_SUMMARY_READ_API_ID, enrolments, activityData, collectionMetadata)
+      } else {
+        // return empty response
+        ResponseUtil.OK(Constants.VIEW_SUMMARY_READ_API_ID, Map("summary" -> List()))
+      }
     } catch {
       case e: Exception => ResponseUtil
         .serverErrorResponse(Constants.VIEW_SUMMARY_READ_API_ID, Map("message" -> e.getMessage))
@@ -104,8 +116,8 @@ class ViewerSummaryActor @Inject()(cassandraUtil: CassandraUtil, httpUtil: HttpU
                       collectionMetadata: Map[String, Map[String, AnyRef]]) = {
     val summary = enrolments.map(enrolment => {
       val enrolmentData = enrolment._2
-      val userActivityData = activityData.get(enrolment._1).get
-      val collectionData = collectionMetadata.get(enrolment._1).get
+      val userActivityData = activityData.getOrElse(enrolment._1, classOf[UserActivityData].getDeclaredConstructor().newInstance())
+      val collectionData = collectionMetadata.getOrElse(enrolment._1, Map())
       
       Summary(enrolmentData.userId, enrolmentData.collectionId, enrolmentData.contextId, enrolmentData.enrolledDate, enrolmentData.active,
         userActivityData.contentStatus, userActivityData.assessmentStatus, collectionData, enrolmentData.issuedCertificates, enrolmentData.completedOn,
