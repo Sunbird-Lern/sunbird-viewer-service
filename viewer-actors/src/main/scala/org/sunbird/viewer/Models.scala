@@ -11,7 +11,7 @@ object ResponseCode extends Enumeration {
   type Code = Value
   val OK, CLIENT_ERROR, SERVER_ERROR = Value
 }
-//type StatusCode = Value
+
 object StatusCode extends Enumeration {
   type status = Int
   val START = Value("1")
@@ -30,6 +30,10 @@ object Constants{
   val CONTENT_START_STATUS = 1
   val CONTENT_END_ = 1
 }
+object Messages {
+  val FIELD_REQUIRED = s"""Field cannot be empty"""
+  val USER_TOKEN_REQURIED = "Invalid User-authenticated-Token Header"
+}
 // Common Class
 
 case class Params(resmsgid: String, msgid: String, err: String, status: String, errmsg: Map[String,String], client_key: Option[String] = None)
@@ -45,9 +49,9 @@ sealed trait BaseViewRequest {
 
   def validate() : Map[String,AnyRef] = {
     if(null == userId || userId.isEmpty)
-    Map("request.userId" -> "cannot be empty")
+    Map("request.userId" -> Messages.USER_TOKEN_REQURIED)
     else if  (null == contentId || contentId.isEmpty)
-    Map("request.contentId" -> "cannot be empty")
+    Map("request.contentId" -> Messages.FIELD_REQUIRED)
     else
       Map()
   }
@@ -79,7 +83,7 @@ case class UpdateRequest(userId: String, contentId:String, collectionId:Option[S
     if(validationErrors.nonEmpty)
       Left(validationErrors)
     else if (progressdetails.isEmpty)
-      Left(Map("request.progressdetails" -> "progress details cannot be empty"))
+      Left(Map("request.progressdetails" -> Messages.FIELD_REQUIRED))
     else {
       Right(UpdateRequest(userId,contentId,Some(collectionId.getOrElse(contentId)),
         Some(contextId.getOrElse(collectionId.getOrElse(contentId))),progressdetails,timespent))

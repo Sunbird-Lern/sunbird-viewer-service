@@ -23,8 +23,9 @@ class RequestInterceptor @Inject()(implicit val mat: Materializer, ec: Execution
 
         val startTime = System.currentTimeMillis()
         val msgid = UUID.randomUUID().toString
-        val userId =AccessTokenValidator.verifyUserToken(request.headers.get("x-authenticated-user-token").get, false)
-
+        val userId = request.headers.get("x-authenticated-user-token").map(token =>{
+            AccessTokenValidator.verifyUserToken(token,false)
+        }).getOrElse(null)
         val msg = s"${msgid} | Method: ${request.method} | Path: ${request.uri} | Remote Address: ${request.remoteAddress} " +
             s"| Domain=${request.domain} | Params: ${request.rawQueryString} " +
             s"| User-Agent: [${request.headers.get("user-agent").getOrElse("N/A")}]"

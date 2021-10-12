@@ -42,8 +42,10 @@ class TestViewCollectActor extends BaseSpec {
     "CollectService" should "test receive function" in {
         val request = """{"id":"api.view.start","ver":"1.0","request":{"userId":"user_123","collectionId":"cc1","contextId":"b1","contentId":"c1"}}"""
         val request1= """{"userId":"user_test1","contentId":"content_test1","progressdetails":{"mimetype":"video","progress":10},"timespent":10}"""
+        val request2= """{"userId":"user_test1","contentId":"content_test1","progressdetails":{"mimetype":"video","progress":10}}"""
         collectRefActor.underlyingActor.receive(BaseRequest("start",request))
         collectRefActor.underlyingActor.receive(BaseRequest("update",request1))
+        collectRefActor.underlyingActor.receive(BaseRequest("end",request2))
     }
 
 
@@ -76,7 +78,7 @@ class TestViewCollectActor extends BaseSpec {
         val response = collectRefActor.underlyingActor.start(request)
         val request1 = Map("collectionId"->"cc1","batchId" -> "b1")
         val response1 = collectRefActor.underlyingActor.start(JSONUtils.serialize(request1))
-        response.result.get.apply("request.userId") should be ("cannot be empty")
+        response.result.get.apply("request.userId") should be ("Invalid User-authenticated-Token Header")
         response.params.status should be ("failed")
         response1.params.status should be ("failed")
     }
@@ -114,7 +116,7 @@ class TestViewCollectActor extends BaseSpec {
         val response = collectRefActor.underlyingActor.end(request)
         val request1 = Map("collectionId"->"cc1","batchId" -> "b1")
         val response1 = collectRefActor.underlyingActor.end(JSONUtils.serialize(request1))
-        response.result.get.apply("request.userId") should be ("cannot be empty")
+        response.result.get.apply("request.userId") should be ("Invalid User-authenticated-Token Header")
         response.params.status should be ("failed")
         response1.params.status should be ("failed")
     }
