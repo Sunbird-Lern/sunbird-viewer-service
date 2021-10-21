@@ -42,4 +42,11 @@ object JSONUtils {
     // $COVERAGE-ON$
   }
 
+  def caseClassToMap(ccObj: AnyRef) =
+    (Map[String, AnyRef]() /: ccObj.getClass.getDeclaredFields) {
+      (map, field) =>
+        field.setAccessible(true)
+        map + (field.getName -> field.get(ccObj))
+    }
+
 }

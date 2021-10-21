@@ -3,6 +3,7 @@ package controllers
 import akka.util.Timeout
 import akka.util.Timeout.durationToTimeout
 import com.typesafe.config.Config
+import filter.Attributes.USER_ID
 import org.sunbird.viewer.ViewRequestBody
 import org.sunbird.viewer.core.JSONUtils
 import play.api.Configuration
@@ -30,5 +31,11 @@ class BaseController(cc: ControllerComponents, configuration: Configuration) ext
         InternalServerError(res)
     }
     resultObj.withHeaders(CONTENT_TYPE -> "application/json")
+  }
+
+  def updateUserId(request:Request[AnyContent]): String = {
+    val requestBody =Json.stringify(request.body.asJson.get)
+    JSONUtils.serialize(JSONUtils.deserialize[ViewRequestBody](requestBody).request
+      .+(("userId", request.attrs.get(USER_ID).getOrElse(null))))
   }
 }

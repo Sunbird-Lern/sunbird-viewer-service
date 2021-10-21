@@ -3,16 +3,17 @@ package org.sunbird.viewer.actors
 import akka.actor.Actor
 import com.typesafe.config.Config
 import org.sunbird.viewer._
-import org.sunbird.viewer.core.{AppConfig, CassandraUtil, JSONUtils, LogUtil, RedisUtil}
+import org.sunbird.viewer.core.{AppConfig, CassandraUtil, JSONUtils, KafkaUtil, LogUtil, RedisUtil}
 import org.sunbird.viewer.util.{QueryUtil, ResponseUtil}
 
 import javax.inject.Inject
 import scala.collection.JavaConverters.mapAsJavaMap
 
-class ViewCollectActor @Inject()(config:Config,cassandraUtil: CassandraUtil, redisUtil: RedisUtil) extends Actor {
+class ViewCollectActor @Inject()(config:Config,cassandraUtil: CassandraUtil, redisUtil: RedisUtil,kafkaUtil: KafkaUtil)
+  extends Actor {
 
   val convertInt: String => Integer = (text: String) => Integer.valueOf(text)
-  val connection = redisUtil.getConnection(config.getInt("redis.viewer.db"))
+  val redis = redisUtil.getConnection(config.getInt("redis.viewer.db"))
   val logger = new LogUtil("ViewCollect")
 
   def receive: Receive = {
@@ -29,7 +30,7 @@ class ViewCollectActor @Inject()(config:Config,cassandraUtil: CassandraUtil, red
       case Right(request) =>
         val statement = QueryUtil.startViewStmt(Constants.CONTENT_CONSUMPTION_TABLE, request)
         if (cassandraUtil.executeStmt(statement, List(convertInt(status)))) {
-          connection.hset(request.toString, "status", status)
+          redis.hset(request.toString, "status", status)
           logger.info("start", Map("context" -> request.toString, "status" -> status))
         }
         val response = JSONUtils.deserialize[Map[String, AnyRef]](s"""{"${request.contentId}":"Progress started"}""")
@@ -46,7 +47,7 @@ class ViewCollectActor @Inject()(config:Config,cassandraUtil: CassandraUtil, red
         val statement = QueryUtil.updateViewStmt(Constants.CONTENT_CONSUMPTION_TABLE, request)
         val dbMap = Map( "progressdetails" -> progress)
         if (cassandraUtil.executeStmt(statement, List(progress))) {
-          connection.hmset(request.toString, mapAsJavaMap(dbMap))
+          redis.hmset(request.toString, mapAsJavaMap(dbMap))
           logger.info("update", Map("context" -> request.toString)++ dbMap)
         }
         val response = JSONUtils.deserialize[Map[String, AnyRef]](s"""{"${request.contentId}":"Progress Updated"}""")
@@ -72,12 +73,23 @@ class ViewCollectActor @Inject()(config:Config,cassandraUtil: CassandraUtil, red
           }
         }.getOrElse(List(convertInt(status)))
         if (cassandraUtil.executeStmt(stmt, dbList )) {
-          connection.hmset(request.toString, mapAsJavaMap(dbMap))
+          redis.hmset(request.toString, mapAsJavaMap(dbMap))
           logger.info("end", Map("context" -> request.toString)++dbMap)
+          pushKafkaEvent(request)
         }
         val response = JSONUtils.deserialize[Map[String, AnyRef]](s"""{"${request.contentId}":"Progress Ended"}""")
         ResponseUtil.OK(Constants.VIEW_END_REQUEST, response)
     }
+  }
+
+  def pushKafkaEvent(request: BaseViewRequest) {
+    val contentEvent = ContentEndEvent(actor = TypeId("Course Batch Updater","system"),
+      context = Context(PData("1.0","org.sunbird.platform")),
+      `object`  = TypeId("CourseBatchEnrolment", request.contextId.get +"_"+request.userId),
+      edata = EData(List(Content(request.contentId,2))),
+      action = "batch-enrolment-update", iteration = 1,batchId = request.contextId.get, userId = request.userId,
+      courseId = request.collectionId.get)
+    kafkaUtil.send(JSONUtils.serialize(contentEvent),AppConfig.getString("kafka_topics_instruction"))
   }
 
 }

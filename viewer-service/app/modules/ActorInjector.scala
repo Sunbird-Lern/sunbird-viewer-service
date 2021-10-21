@@ -3,7 +3,7 @@ package modules
 import akka.routing.FromConfig
 import com.google.inject.AbstractModule
 import org.sunbird.auth.verifier.KeyManager
-import org.sunbird.viewer.actors.{HealthCheckActor, ViewCollectActor}
+import org.sunbird.viewer.actors.{HealthCheckActor, ViewCollectActor, ViewProvideActor}
 import play.api.libs.concurrent.AkkaGuiceSupport
 
 
@@ -15,6 +15,6 @@ class ActorInjector extends AbstractModule with AkkaGuiceSupport {
 
     bindActor[HealthCheckActor](name = "health-check-actor", _.withRouter(actorConfig))
     bindActor[ViewCollectActor](name ="view-collect-actor")
-    /*bindActor[ViewEndActor](name = "view-end-actor")*/
+    bindActor[ViewProvideActor](name = "view-provide-actor")
   }
 }

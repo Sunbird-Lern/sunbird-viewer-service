@@ -24,15 +24,15 @@ object Constants{
   val VIEW_END_REQUEST = "api.view.end"
   val VIEW_UPDATE_REQUEST = "api.view.update"
   val VIEW_READ_REQUEST = "api.view.read"
+  val VIEW_CONTEXT_READ_ALL_REQUEST = "api.view.read.context.all"
   val SUNBIRD_COURSES_KEYSPACE= "sunbird_courses"
   val CONTENT_CONSUMPTION_TABLE="user_content_consumption_new"
   val USER_ENROLMENTS_TABLE="user_enrolments"
-  val CONTENT_START_STATUS = 1
-  val CONTENT_END_ = 1
 }
 object Messages {
   val FIELD_REQUIRED = s"""Field cannot be empty"""
   val USER_TOKEN_REQURIED = "Invalid User-authenticated-Token Header"
+  val REQUEST_EMTPY = s"""Request cannot be empty"""
 }
 // Common Class
 
@@ -105,6 +105,24 @@ case class EndRequest(userId: String, contentId:String, collectionId:Option[Stri
   }
 }
 
+
+case class ReadContent(userId: String, contents : List[ContentSpec])
+case class ReadAllContent(userId: String,allContents : List[ContentSpec])
+case class ContentSpec(contentId:String, collectionId: String, contextId: String, status: String,progressDetails :Map[String,AnyRef])
+
+case class ReadAllRequest(userId: String, contentId:Option[String] =None, collectionId: Option[String] =None) {
+  def validateRequest(): Either[Map[String,String],ReadAllRequest] = {
+    if(null == userId || userId.isEmpty)
+      Left(Map("request.userId" -> Messages.USER_TOKEN_REQURIED))
+    else if(contentId.getOrElse("").isEmpty && collectionId.getOrElse("").isEmpty)
+     Left(Map("request" -> Messages.REQUEST_EMTPY))
+    else
+      Right(ReadAllRequest(userId,contentId,collectionId))
+  }
+  override  def toString: String = {
+    s"""$userId:${contentId.getOrElse(collectionId)}"""
+  }
+}
 
 case class ContentEndEvent(eid: String = "BE_JOB_REQUEST", ets: Long = System.currentTimeMillis(),
                            mid: String = UUID.randomUUID.toString, actor: TypeId, context: Context, `object`: TypeId,

@@ -2,7 +2,7 @@ package org.sunbird.viewer.util
 
 import org.joda.time.{DateTime, DateTimeZone}
 import org.sunbird.viewer.core.APIResponseUtil
-import org.sunbird.viewer.{Params, BaseResponse, ResponseCode}
+import org.sunbird.viewer.{BaseResponse, Params, ResponseCode}
 
 import java.util.UUID
 
@@ -22,4 +22,5 @@ object ResponseUtil extends APIResponseUtil{
       Params(UUID.randomUUID().toString, null, ResponseCode.SERVER_ERROR.toString, "failed", null),
       ResponseCode.SERVER_ERROR.toString, Some(errResponse))
   }
+
 }

@@ -9,7 +9,7 @@ import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import org.scalatestplus.mockito.MockitoSugar
 import org.sunbird.viewer.BaseRequest
 import org.sunbird.viewer.actors.ViewCollectActor
-import org.sunbird.viewer.core.{CassandraUtil, RedisUtil}
+import org.sunbird.viewer.core.{CassandraUtil, KafkaUtil, RedisUtil}
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.test.{FakeRequest, Helpers}
@@ -24,9 +24,8 @@ class TestViewCollectController extends FlatSpec with Matchers with BeforeAndAft
     when(configurationMock.underlying).thenReturn(mockConfig)
     implicit val timeout: Timeout = 20.seconds
     implicit val executor = scala.concurrent.ExecutionContext.global
-    val redisUtilMock= mock[RedisUtil]
     when(mockConfig.getInt("redis.viewer.db")).thenReturn(1)
-    val viewActor = TestActorRef(new ViewCollectActor(mockConfig,mock[CassandraUtil],mock[RedisUtil]) {
+    val viewActor = TestActorRef(new ViewCollectActor(mockConfig,mock[CassandraUtil],mock[RedisUtil],mock[KafkaUtil]) {
         override def receive: Receive = {
             case BaseRequest("start",request: String) => sender () ! start(request)
             case BaseRequest("update",request: String) => sender () ! update(request)

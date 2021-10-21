@@ -3,10 +3,9 @@ package org.sunbird.viewer.actors
 import akka.actor.ActorSystem
 import akka.testkit.TestActorRef
 import akka.util.Timeout
-import com.typesafe.config.Config
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.sunbird.viewer.BaseRequest
-import org.sunbird.viewer.core.{AppConfig, CassandraUtil, JSONUtils, KafkaUtil, RedisUtil}
+import org.sunbird.viewer.core._
 import org.sunbird.viewer.spec.BaseSpec
 import redis.clients.jedis.Jedis
 
@@ -14,7 +13,7 @@ import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
 class TestViewCollectActor extends BaseSpec {
     var cassandraUtil: CassandraUtil = _
-    var kafkaConnector : KafkaUtil = _
+    var kafkaUtil : KafkaUtil = _
     var redisUtil : RedisUtil = _
     var redisConnection : Jedis = _
     var collectRefActor  : TestActorRef[ViewCollectActor]  = _
@@ -23,14 +22,14 @@ class TestViewCollectActor extends BaseSpec {
         super.beforeAll()
 
         cassandraUtil = new CassandraUtil
-        kafkaConnector = new KafkaUtil
+        kafkaUtil = new KafkaUtil
         redisUtil = new RedisUtil
         redisConnection = redisUtil.getConnection(AppConfig.getInt("redis.viewer.db"))
-        collectRefActor = TestActorRef(new ViewCollectActor(config,cassandraUtil,redisUtil))
+        collectRefActor = TestActorRef(new ViewCollectActor(config,cassandraUtil,redisUtil,kafkaUtil))
     }
     override def afterAll() : Unit = {
         redisUtil.closePool()
-        kafkaConnector.close()
+        kafkaUtil.close()
         super.afterAll()
     }
 
@@ -108,7 +107,8 @@ class TestViewCollectActor extends BaseSpec {
         val response1 = collectRefActor.underlyingActor.end(request1)
         response.responseCode should be("OK")
         response.params.status should be("successful")
-        redisConnection.hgetAll("user_test1:content_test1:content_test1:content_test1").get("progressdetails") should be("{\"mimetype\":\"video\",\"progress\":10}")
+        redisConnection.hgetAll("user_test1:content_test1:content_test1:content_test1")
+          .get("progressdetails") should be("{\"mimetype\":\"video\",\"progress\":10}")
     }
 
     "CollectService" should "return failed response for all invalid end view request" in {

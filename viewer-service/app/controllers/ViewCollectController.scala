@@ -39,10 +39,6 @@ class ViewCollectController @Inject()(@Named("view-collect-actor") collectActor:
   }
 
 
-  def updateUserId(request:Request[AnyContent]): String = {
-    val requestBody =Json.stringify(request.body.asJson.get)
-    JSONUtils.serialize(JSONUtils.deserialize[ViewRequestBody](requestBody).request
-      .+(("userId", request.attrs.get(USER_ID).getOrElse(null))))
-  }
+
 
 }

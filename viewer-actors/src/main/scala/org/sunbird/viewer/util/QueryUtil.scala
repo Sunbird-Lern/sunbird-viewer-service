@@ -57,11 +57,17 @@ object QueryUtil {
       .and(QB.eq("batchid", bindMarker())).toString
   }
 
-  def getViewReadStatement(table:String) : String = {
-    QB.select.from(Constants.SUNBIRD_COURSES_KEYSPACE,table)
-      .where(QB.eq("userid",bindMarker()))
-      .and(QB.eq("courseid",bindMarker()))
-      .and(QB.eq("batchid",bindMarker())).toString
+  def readViewStmt(table:String,request: BaseViewRequest) : String = {
+    QB.select("status","progressdetails").from(Constants.SUNBIRD_COURSES_KEYSPACE,table)
+      .where(QB.eq("userid",request.userId))
+      .and(QB.eq("contentid",request.contentId))
+      .and(QB.eq("collectionid",request.collectionId.get))
+      .and(QB.eq("contextid",request.contextId.get)).toString
+  }
+
+  def readAllViewStmt(table:String,column:String,value:String) : String = {
+    QB.select("contentid","collectionid","contextid","status","progressdetails").from(Constants.SUNBIRD_COURSES_KEYSPACE,table)
+      .where(QB.eq(column,value)).allowFiltering().toString
   }
 
 }

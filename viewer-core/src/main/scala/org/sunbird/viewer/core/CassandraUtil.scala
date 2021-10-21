@@ -36,6 +36,7 @@ class CassandraUtil() {
   def find(query: String,bindList: List[AnyRef]): java.util.List[Row] = {
     try {
       val rs: ResultSet = session.execute(session.prepare(query).bind(bindList : _*))
+
       rs.all
     } catch {
       case ex: DriverException =>
@@ -44,6 +45,18 @@ class CassandraUtil() {
         throw ex
     }
   }
+  def find(query: String): java.util.List[Row] = {
+    try {
+      val rs: ResultSet = session.execute(query)
+      rs.all
+    } catch {
+      case ex: DriverException =>
+        logger.info(s"Failed cassandra query is ${query}")
+        ex.printStackTrace()
+        throw ex
+    }
+  }
+
 
   def checkConnection() = {
     try {
