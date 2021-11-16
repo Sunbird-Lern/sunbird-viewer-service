@@ -2,7 +2,8 @@ package org.sunbird.viewer.util
 
 import com.datastax.driver.core.querybuilder.QueryBuilder.bindMarker
 import com.datastax.driver.core.querybuilder.{Insert, Update, QueryBuilder => QB}
-import org.sunbird.viewer.{BaseViewRequest, Constants}
+import org.joda.time.DateTime
+import org.sunbird.viewer.{AssessSpec, BaseViewRequest, Constants, QuestionData, ViewAssessRequest}
 
 import java.util.Date
 
@@ -68,6 +69,15 @@ object QueryUtil {
   def readAllViewStmt(table:String,column:String,value:String) : String = {
     QB.select("contentid","collectionid","contextid","status","progressdetails").from(Constants.SUNBIRD_COURSES_KEYSPACE,table)
       .where(QB.eq(column,value)).allowFiltering().toString
+  }
+
+  def saveAssessStmt(table:String,request: AssessSpec) : String  = {
+    QB.insertInto(Constants.SUNBIRD_COURSES_KEYSPACE, table)
+      .value("course_id", request.collectionId).value("batch_id", request.contextId)
+      .value("user_id", request.userId).value("content_id", request.contentId)
+      .value("attempt_id", request.attemptId).value("updated_on", new Date())
+      .value("last_attempted_on", request.assessmentTs)
+      .value("question", bindMarker()).toString
   }
 
 }

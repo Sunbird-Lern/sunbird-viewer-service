@@ -1,5 +1,6 @@
 package org.sunbird.viewer.core
 
+import redis.clients.jedis.exceptions.JedisException
 import redis.clients.jedis.{Jedis, JedisPool, JedisPoolConfig}
 
 import java.time.Duration
@@ -38,6 +39,20 @@ class RedisUtil {
     jedisPool.close()
   }
 
+  def sMembers(conn:Jedis,key: String): java.util.Set[String] = {
+    conn.smembers(key)
+  }
+  def getKeyMembers(conn:Jedis,key: String): java.util.Set[String] = {
+    try {
+      sMembers(conn,key)
+    } catch {
+      case ex: JedisException =>
+        val db = conn.getDB.toInt
+        conn.close()
+        sMembers(getConnection(db),key)
+    }
+  }
+
   def checkConnection = {
     try {
       val conn = getConnection(2)
@@ -48,3 +63,4 @@ class RedisUtil {
     }
   }
 }
+
