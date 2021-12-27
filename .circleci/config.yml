@@ -1,0 +1,28 @@
+version: 2.1
+jobs:
+  sunbird-viewer-service-build:
+    machine:
+      image: ubuntu-2004:202008-01
+    steps:
+    - checkout
+
+    - restore_cache:
+        keys: 
+          - viewer-service-dependency-cache-{{ checksum "pom.xml" }}
+    - save_cache:
+        key: viewer-service-dependency-cache-{{ checksum "pom.xml" }}
+        paths: ~/.m2
+    - run:
+        name: viewer-service-build
+        command: |
+          mvn clean scoverage:report    
+    - run:
+        name: sonar
+        command: |
+          mvn -X sonar:sonar -Dsonar.projectKey=project-sunbird_sunbird-viewer-service -Dsonar.organization=project-sunbird -Dsonar.host.url=https://sonarcloud.io -Dsonar.scala.coverage.reportPaths=/home/circleci/project/target/scoverage.xml
+##test
+workflows:
+  version: 2.1
+  workflow:
+    jobs:
+    - sunbird-viewer-service-build
